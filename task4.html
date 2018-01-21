@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Form work1</title>
+  <script>
+    /*
+      Задание:
+
+      1. Сгенерировать список стран в Select countries
+      2. При выборе страны генерировать еще один Select со списком
+        городов этой страны и вывести этот селект в блок result
+      3. При выборе города нужно случайно рандомить температуру от
+      -10 градусов до +40. Если температура
+
+        -10 до 0 то 'Солнечно' 'Легкий снегопад' 'Сильный снегопад'
+        0 до 30 то  'Солнечно' 'Дождь' 'Ветер' 'Сильный дождь'
+        30 до 40 то 'Солнечно' 'Засуха' 'Ветер'
+
+      4. Вывести сообщение на страничку
+        {Country}. В {City} {Weather} {Temperature} градусов.
+        Ukraine. В Kyiv Солнечно -10 градусов
+
+        + бонус добавить красивые картинки с погодой
+    */
+    window.addEventListener("load", function () {
+        var countries = ['Ukraine', 'Poland', 'USA'],
+            ukraineCity = ['Kyiv', 'Lviv', 'Odesa', 'Charkiv'],
+            polandCity = ['Warszawa', 'Poznan', 'Krakow', 'Katowice'],
+            usaCity = ['New York', 'Los Angeles', 'Las Vegas', 'Chicago'],
+            ColdWeather = ['Солнечно', 'Легкий снегопад', 'Сильный снегопад'], //перебрать массив и к каждому значению присвоить картинку
+            NormalWeather = ['Солнечно', 'Дождь', 'Ветер', 'Сильный дождь'],
+            WarmWeather = ['Солнечно', 'Засуха', 'Ветер'],
+            Mycountry = document.getElementById('countries'),
+            MyResult = document.getElementById('result'),
+            Weather = document.getElementById('weather');
+
+        countries.forEach(function(element){
+            var Country = new Option (element, element);
+                // console.log(Country);
+                Mycountry.appendChild(Country);
+        });
+
+        function getRandomIntInclusive(min, max) {
+            min = Math.ceil(min);
+            max = Math.floor(max);
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        };
+
+        Mycountry.addEventListener('change', function(event){
+            var SelectedCountry = event.target.value;
+                // console.log(SelectedCountry);
+                if(SelectedCountry === 'Poland'){
+                  GenerateCity(polandCity, SelectedCountry);
+                }
+                if(SelectedCountry === 'Ukraine'){
+                  GenerateCity(ukraineCity, SelectedCountry);
+                }
+                if(SelectedCountry === 'USA'){
+                  GenerateCity(usaCity, SelectedCountry);
+                }
+        });
+
+
+        // function RenderImage( ImagePosition ){
+        //     ImagePosition.forEach(function(element){
+        //     var WeatherImage = new Option (element, element);
+        //     console.log(WeatherImage);
+        //     });
+        // };
+//             // if(WeatherImage === 'Солнечно'){
+//             //     var SunImage = document.createElement('img');
+//             //         SunImage.setAttribute('src', 'sunny.png');
+//             //         Weather.appendChild(SunImage);
+//             // };
+
+        function GenerateCity( array, SelectedCountry) {
+            MyResult.innerHTML = null;
+            var SelectCity = document.createElement('select');
+            array.forEach(function(element){
+                var CityOption = new Option (element, element);
+// console.log(CityOption);
+                SelectCity.appendChild(CityOption);
+            });
+            MyResult.appendChild(SelectCity);
+                SelectCity.addEventListener('change', function(event){
+                    var SelectedCity = event.target.value;
+                    // console.log(SelectedCity);
+                    var SomeTemp = getRandomIntInclusive(-10, 40);
+                    var WeatherIndex = getRandomIntInclusive(0,2);
+                    // console.log(SomeTemp);
+                    renderOnPage(SomeTemp, SelectedCity, WeatherIndex, SelectedCountry)
+                });
+        }
+
+        function renderOnPage(SomeTemp, SelectedCity, WeatherIndex, SelectedCountry){
+            let weather_x;
+            if(SomeTemp <= 0){
+                // console.log(
+                //      SomeTemp + 'WEATHER IN CITY '+ SelectedCity,
+                //     ColdWeather[WeatherIndex] + SelectedCountry
+                // );
+                //RenderWeatherImage();
+                weather_x = ColdWeather[WeatherIndex];
+            }
+            if(SomeTemp > 0 && SomeTemp < 30){
+              // console.log(
+              //     SomeTemp + 'WEATHER IN CITY '+ SelectedCity,
+              //     NormalWeather[WeatherIndex] + SelectedCountry
+              // );
+                //RenderWeatherImage(NormalWeather[WeatherIndex]);
+                weather_x = NormalWeather[WeatherIndex];
+            }
+            if (SomeTemp >= 30) {
+                // console.log(
+                //     SomeTemp +  'WEATHER IN CITY '+ SelectedCity,
+                //     WarmWeather[WeatherIndex] + SelectedCountry
+                // );
+
+                weather_x = WarmWeather[WeatherIndex];
+            }
+
+            var CityWeather = document.createElement('div');
+                Weather.innerHTML = '';
+                CityWeather.innerHTML = SelectedCountry + '.' + ' В ' + SelectedCity + ' ' + SomeTemp + ' градус ' +
+                WarmWeather[WeatherIndex];
+                // console.log(CityWeather);
+                Weather.appendChild(CityWeather);
+                RenderWeatherImage(weather_x);
+        }
+
+
+        function RenderWeatherImage( weather ){
+            let WeatherPicture;
+            switch (weather) {
+                case 'Солнечно':
+                    WeatherPicture = 'sunny.png';
+                    break;
+                default:
+                    WeatherPicture = 'http://ipf.tnpu.edu.ua/wp-content/uploads/2017/11/f752abb3-1b49-4f99-b68a-7c4d77b45b40_1.39d6c524f6033c7c58bd073db1b99786.jpeg'
+            }
+            // return WeatherPicture;
+console.log(WeatherPicture, 'WeatherPicture');
+            let x = new Image();
+            x.setAttribute('src', WeatherPicture );
+
+            Weather.appendChild(x);
+            console.log(x);
+        };
+        RenderWeatherImage('Солнечно');
+    });
+    </script>
+</head>
+<body>
+
+  <select id="countries">
+
+  </select>
+
+  <div id="result">
+
+
+  </div>
+
+<div id='weather'>
+
+</div>
+
+
+  <style>
+
+  </style>
+</body>
+</html>
